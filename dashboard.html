@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Street Food — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-fire">🔥</span>
+    <span class="brand-label">Street Food</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <button class="nav-item active" data-tab="commandes">
+      <i class="fas fa-receipt"></i>
+      <span>Commandes</span>
+      <span class="nav-badge" id="liveOrdersBadge">0</span>
+    </button>
+    <button class="nav-item" data-tab="stats">
+      <i class="fas fa-chart-line"></i>
+      <span>Statistiques</span>
+    </button>
+    <button class="nav-item" data-tab="gestion">
+      <i class="fas fa-boxes-stacked"></i>
+      <span>Gestion</span>
+    </button>
+    <button class="nav-item" data-tab="livraison">
+      <i class="fas fa-motorcycle"></i>
+      <span>Livraison</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="time-chip" id="realTime">--:--</div>
+    <div class="sound-row">
+      <i class="fas fa-bell"></i>
+      <label class="toggle-switch">
+        <input type="checkbox" id="soundToggle" checked>
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+    <button class="refresh-chip" id="refreshBtn"><i class="fas fa-rotate"></i> Sync</button>
+  </div>
+</aside>
+
+<!-- MOBILE HEADER -->
+<header class="mobile-header">
+  <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+  <span class="mobile-title">🔥 Street Food</span>
+  <span class="mobile-badge" id="mobileBadge">0</span>
+</header>
+
+<!-- MAIN -->
+<main class="main-area">
+
+  <!-- ─── KPI STRIP ─── -->
+  <div class="kpi-strip">
+    <div class="kpi-card">
+      <div class="kpi-icon fire"><i class="fas fa-fire-flame-curved"></i></div>
+      <div>
+        <div class="kpi-val" id="kpiLive">0</div>
+        <div class="kpi-label">En cours</div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon green"><i class="fas fa-coins"></i></div>
+      <div>
+        <div class="kpi-val" id="kpiCA">0 F</div>
+        <div class="kpi-label">CA aujourd'hui</div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon blue"><i class="fas fa-chair"></i></div>
+      <div>
+        <div class="kpi-val" id="kpiTables">0/30</div>
+        <div class="kpi-label">Tables actives</div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon amber"><i class="fas fa-truck"></i></div>
+      <div>
+        <div class="kpi-val" id="kpiDeliveries">0</div>
+        <div class="kpi-label">Livraisons</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── COMMANDES ─── -->
+  <div class="tab-panel active" id="commandesPanel">
+    <div class="panel-header">
+      <h2 class="panel-title">Commandes</h2>
+    </div>
+    <!-- Sub-tabs -->
+    <div class="sub-tabs">
+      <button class="sub-tab active" data-sub="all">Toutes <span class="sub-count" id="subAll">0</span></button>
+      <button class="sub-tab" data-sub="surplace">Sur place <span class="sub-count" id="subSurplace">0</span></button>
+      <button class="sub-tab" data-sub="livraison">Livraison <span class="sub-count" id="subLivraison">0</span></button>
+      <button class="sub-tab" data-sub="reservation">Réservations <span class="sub-count" id="subReservation">0</span></button>
+    </div>
+    <div class="export-bar">
+      <button class="export-btn" id="exportOrdersBtn"><i class="fas fa-file-excel"></i> Exporter Excel</button>
+    </div>
+    <div class="orders-list" id="ordersList"></div>
+    <div class="orders-list" id="reservationsList" style="display:none"></div>
+  </div>
+
+  <!-- ─── STATISTIQUES ─── -->
+  <div class="tab-panel" id="statsPanel">
+    <div class="panel-header">
+      <h2 class="panel-title">Statistiques</h2>
+      <div class="period-btns">
+        <button class="period-btn active" data-period="today">Auj.</button>
+        <button class="period-btn" data-period="yesterday">Hier</button>
+        <button class="period-btn" data-period="7days">7j</button>
+        <button class="period-btn" data-period="30days">30j</button>
+        <button class="period-btn" data-period="year">Année</button>
+      </div>
+      <button class="export-btn" id="exportStatsBtn"><i class="fas fa-file-excel"></i> Exporter</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-block">
+        <div class="stat-block-title">CA sur la période</div>
+        <canvas id="caChart" height="200"></canvas>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block-title">Heures de pointe</div>
+        <canvas id="rushChart" height="200"></canvas>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block-title">Plats populaires</div>
+        <canvas id="dishChart" height="200"></canvas>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block-title">Type de commandes</div>
+        <canvas id="typeChart" height="200"></canvas>
+      </div>
+    </div>
+
+    <div class="top-cards">
+      <div class="top-card" id="topDishCard">
+        <div class="top-card-icon">🏆</div>
+        <div>
+          <div class="top-card-label">Plat vedette</div>
+          <div class="top-card-val" id="topDishName">—</div>
+          <div class="top-card-sub" id="topDishCount">0 commandes</div>
+        </div>
+      </div>
+      <div class="top-card" id="topHourCard">
+        <div class="top-card-icon">⏰</div>
+        <div>
+          <div class="top-card-label">Heure de pointe</div>
+          <div class="top-card-val" id="topHour">—</div>
+          <div class="top-card-sub" id="topHourCount">0 commandes</div>
+        </div>
+      </div>
+      <div class="top-card">
+        <div class="top-card-icon">📦</div>
+        <div>
+          <div class="top-card-label">Total commandes</div>
+          <div class="top-card-val" id="statTotalOrders">0</div>
+          <div class="top-card-sub" id="statPeriodLabel">Aujourd'hui</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── GESTION ─── -->
+  <div class="tab-panel" id="gestionPanel">
+    <div class="panel-header">
+      <h2 class="panel-title">Gestion des plats</h2>
+    </div>
+    <div class="gestion-layout">
+      <!-- Form -->
+      <div class="add-form-wrap">
+        <h3 class="form-section-title"><i class="fas fa-plus"></i> Nouveau plat</h3>
+        <form id="addPlatForm" autocomplete="off">
+          <label class="fl">Nom *</label>
+          <input type="text" id="newNom" class="fi" required>
+          <label class="fl">Prix (FCFA) *</label>
+          <input type="number" id="newPrix" class="fi" min="0" required>
+          <label class="fl">Catégorie</label>
+          <select id="newCat" class="fi">
+            <option value="burgers">🍔 Burgers</option>
+            <option value="pizzas">🍕 Pizzas</option>
+            <option value="pates">🍝 Pâtes</option>
+            <option value="salades">🥗 Salades</option>
+            <option value="desserts">🍰 Desserts</option>
+            <option value="boissons">🥤 Boissons</option>
+          </select>
+          <label class="fl">Image URL</label>
+          <input type="url" id="newImg" class="fi" placeholder="https://…">
+          <label class="fl">Description</label>
+          <textarea id="newDesc" class="fi" rows="2"></textarea>
+          <label class="fl">Tags (virgule)</label>
+          <input type="text" id="newTags" class="fi" placeholder="Premium, Best-seller">
+          <button type="submit" class="form-submit-btn">Ajouter le plat</button>
+        </form>
+      </div>
+      <!-- Plats list -->
+      <div class="plats-list-wrap" id="platsGestion"></div>
+    </div>
+  </div>
+
+  <!-- ─── LIVRAISON ─── -->
+  <div class="tab-panel" id="livraisonPanel">
+    <div class="panel-header">
+      <h2 class="panel-title">Zones de livraison</h2>
+    </div>
+    <div class="livraison-layout">
+      <div class="add-zone-form">
+        <h3 class="form-section-title"><i class="fas fa-plus"></i> Ajouter une zone</h3>
+        <label class="fl">Ville / Quartier *</label>
+        <input type="text" id="newZoneName" class="fi" placeholder="Ex: Cocody">
+        <label class="fl">Prix de livraison (FCFA) *</label>
+        <input type="number" id="newZonePrice" class="fi" placeholder="Ex: 1000" min="0">
+        <button class="form-submit-btn" id="addZoneBtn">Ajouter la zone</button>
+      </div>
+      <div class="zones-table-wrap">
+        <div class="zones-table-header">
+          <span>Zones configurées</span>
+          <span style="color:var(--muted);font-size:.8rem">Affiché au client avec calcul automatique</span>
+        </div>
+        <div id="zonesTable"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div id="toastContainer"></div>
+<!-- Section Gestion des Livreurs -->
+<section id="livreursPanel" class="tab-panel">
+  <div class="card">
+    <div class="card-header">
+      <h3><i class="fas fa-motorcycle"></i> Gestion des Livreurs</h3>
+    </div>
+    
+    <!-- Formulaire d'ajout -->
+    <div class="livreur-form">
+      <div class="input-group">
+        <label for="livreurNom">Nom du Livreur</label>
+        <input type="text" id="livreurNom" placeholder="Ex: Moussa Diakité">
+      </div>
+      <div class="input-group">
+        <label for="livreurTel">Numéro WhatsApp (10 chiffres)</label>
+        <input type="tel" id="livreurTel" placeholder="Ex: 0708091011">
+      </div>
+      <button id="addLivreurBtn" class="btn-fire">
+        <i class="fas fa-plus"></i> Ajouter
+      </button>
+    </div>
+
+    <!-- Liste des livreurs inscrits -->
+    <div class="livreurs-list-container">
+      <h4>Livreurs enregistrés</h4>
+      <div id="livreursList" class="livreurs-grid">
+        <!-- Généré dynamiquement par le JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER SOUND -->
+<audio id="orderSound" preload="auto">
+  <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
+</audio>
+
+<!-- 1. On charge l'outil Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<!-- 2. On charge ton fichier de configuration avec tes clés -->
+<script src="supabase-client.js"></script>
+
+<!-- 3. On charge ton code dashboard (ton fichier actuel) -->
+<script src="dashboard.js"></script>
+</body>
+</html>

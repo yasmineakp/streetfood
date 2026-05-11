@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Street Food — Commander</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="index.css">
+</head>
+<body>
+<div class="bg-layer"></div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="#">
+      <span class="brand-icon">🔥</span>
+      <span class="brand-name">Street Food</span>
+    </a>
+    <div class="header-right">
+      <div class="search-wrap">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Chercher un plat…">
+      </div>
+      <button class="cart-btn" id="cartToggle">
+        <i class="fas fa-bag-shopping"></i>
+        <span class="cart-count" id="cartBadge">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- TABLE / COMMANDE INFO BAR -->
+<div class="info-bar" id="infoBar">
+  <span id="infoBarText">📍 Choisissez votre table ou mode de commande</span>
+  <button class="change-btn" id="changeInfoBtn">Modifier</button>
+</div>
+
+<!-- NAV TABS -->
+<nav class="main-nav">
+  <button class="nav-tab active" data-tab="menu"><i class="fas fa-utensils"></i> Menu</button>
+  <button class="nav-tab" data-tab="panier"><i class="fas fa-receipt"></i> Commande</button>
+  <button class="nav-tab" data-tab="reservation"><i class="fas fa-calendar"></i> Réserver</button>
+</nav>
+
+<!-- ===== MENU TAB ===== -->
+<section class="tab-content active" id="menuTab">
+  <div class="categories-bar" id="categoriesBar">
+    <button class="cat-btn active" data-category="all">Tout</button>
+    <button class="cat-btn" data-category="burgers">Burgers</button>
+    <button class="cat-btn" data-category="pizzas">Pizzas</button>
+    <button class="cat-btn" data-category="pates">Pâtes</button>
+    <button class="cat-btn" data-category="salades">Salades</button>
+    <button class="cat-btn" data-category="desserts">Desserts</button>
+    <button class="cat-btn" data-category="boissons">Boissons</button>
+  </div>
+  <div class="dishes-grid" id="dishesGrid"></div>
+</section>
+
+<!-- ===== PANIER TAB ===== -->
+<section class="tab-content" id="panierTab">
+  <div class="page-wrap">
+    <h2 class="page-title">Votre commande</h2>
+
+    <!-- TYPE SELECTOR -->
+    <div class="type-selector">
+      <button class="type-btn active" data-type="onsite"><i class="fas fa-chair"></i> Sur place</button>
+      <button class="type-btn" data-type="delivery"><i class="fas fa-motorcycle"></i> Livraison</button>
+    </div>
+
+    <!-- TABLE (onsite) -->
+    <div id="onsiteBlock" class="order-block">
+      <label class="field-label">Numéro de table *</label>
+      <select id="tableNumber" class="field-input">
+        <option value="">— Choisir —</option>
+      </select>
+      <label class="field-label" style="margin-top:1rem">N° de commande (optionnel)</label>
+      <input type="text" id="orderRef" class="field-input" placeholder="Ex: CMD-42">
+    </div>
+
+    <!-- DELIVERY FORM -->
+    <div id="deliveryBlock" class="order-block" style="display:none">
+      <div class="form-row">
+        <div>
+          <label class="field-label">Nom *</label>
+          <input type="text" id="delNom" class="field-input">
+        </div>
+        <div>
+          <label class="field-label">Prénom *</label>
+          <input type="text" id="delPrenom" class="field-input">
+        </div>
+      </div>
+      <label class="field-label">Ville / Quartier *</label>
+      <input type="text" id="delVille" class="field-input" placeholder="Ex: Cocody, Plateau…">
+      <div id="deliveryZoneInfo" class="zone-info" style="display:none"></div>
+      <label class="field-label">Adresse complète *</label>
+      <input type="text" id="delAdresse" class="field-input">
+      <label class="field-label">Téléphone *</label>
+      <input type="tel" id="delTel" class="field-input">
+    </div>
+
+    <!-- CART ITEMS -->
+    <div class="cart-section">
+      <div id="cartItems"></div>
+      <div class="cart-footer" id="cartFooter" style="display:none">
+        <label class="field-label">Instructions spéciales</label>
+        <textarea id="specialInstructions" class="field-input" rows="2" placeholder="Sans oignons, allergie…"></textarea>
+        <div class="total-row">
+          <span>Sous-total</span><span id="subtotalAmt">0 FCFA</span>
+        </div>
+        <div class="total-row delivery-fee-row" id="deliveryFeeRow" style="display:none">
+          <span>Frais de livraison</span><span id="deliveryFeeAmt">0 FCFA</span>
+        </div>
+        <div class="total-row grand-total">
+          <span>Total</span><span id="grandTotalAmt">0 FCFA</span>
+        </div>
+        <button class="submit-btn" id="submitOrderBtn">
+          <i class="fas fa-check-circle"></i> Passer la commande
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RESERVATION TAB ===== -->
+<section class="tab-content" id="reservationTab">
+  <div class="page-wrap">
+    <h2 class="page-title">Réserver une table</h2>
+    <form id="reservationForm" class="res-form">
+      <div class="form-row">
+        <div>
+          <label class="field-label">Nom *</label>
+          <input type="text" id="resNom" class="field-input" required>
+        </div>
+        <div>
+          <label class="field-label">Prénom *</label>
+          <input type="text" id="resPrenom" class="field-input" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="field-label">Date *</label>
+          <input type="date" id="resDate" class="field-input" required>
+        </div>
+        <div>
+          <label class="field-label">Heure *</label>
+          <input type="time" id="resHeure" class="field-input" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="field-label">Personnes *</label>
+          <input type="number" id="resPersonnes" class="field-input" min="1" max="20" required>
+        </div>
+        <div>
+          <label class="field-label">Téléphone *</label>
+          <input type="tel" id="resTel" class="field-input" required>
+        </div>
+      </div>
+      <label class="field-label">Notes (optionnel)</label>
+      <textarea id="resNotes" class="field-input" rows="2" placeholder="Occasion spéciale, préférence…"></textarea>
+      <button type="submit" class="submit-btn"><i class="fas fa-calendar-check"></i> Confirmer la réservation</button>
+    </form>
+  </div>
+</section>
+
+<!-- TOAST -->
+<div id="toastContainer"></div>
+
+<!-- MODAL CHANGE TABLE -->
+<div class="modal-overlay" id="changeModal" style="display:none">
+  <div class="modal-box">
+    <h3>Modifier votre commande</h3>
+    <label class="field-label">Type</label>
+    <div class="type-selector" style="margin-bottom:1rem">
+      <button class="type-btn active" data-modal-type="onsite"><i class="fas fa-chair"></i> Sur place</button>
+      <button class="type-btn" data-modal-type="delivery"><i class="fas fa-motorcycle"></i> Livraison</button>
+    </div>
+    <div id="modalOnsiteBlock">
+      <label class="field-label">Table</label>
+      <select id="modalTable" class="field-input">
+        <option value="">— Choisir —</option>
+      </select>
+    </div>
+    <div id="modalDeliveryBlock" style="display:none">
+      <label class="field-label">Ville / Quartier</label>
+      <input type="text" id="modalVille" class="field-input">
+    </div>
+    <button class="submit-btn" id="saveModalBtn" style="margin-top:1rem">Enregistrer</button>
+    <button class="cancel-btn" id="closeModalBtn">Annuler</button>
+  </div>
+</div>
+
+<!-- 1. On charge l'outil Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<!-- 2. On charge ton fichier de configuration avec tes clés -->
+<script src="supabase-client.js"></script>
+
+<!-- 3. On charge ton code dashboard (ton fichier actuel) -->
+<script src="index.js"></script>
+</body>
+</html>
