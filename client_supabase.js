@@ -7,8 +7,8 @@
 // ─── CONFIGURATION ───
 // Remplacez ces deux valeurs par celles de votre projet Supabase
 // Dashboard Supabase → Settings → API
-const SUPABASE_URL = 'https://yftcetimcyapfksniawf.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdGNldGltY3lhcGZrc25pYXdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0ODA0MzgsImV4cCI6MjA5NDA1NjQzOH0.OLNHWQXiNzjNYMXIyqzZ2aV9PjWB8n7OcQkEBdug9SA';
+const SUPABASE_URL = 'https://qeaoolctbtvgvgfmcjaq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlYW9vbGN0YnR2Z3ZnZm1jamFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1MDk4NDAsImV4cCI6MjA5NDA4NTg0MH0.XaPtH1q6m3pKDGyOP-opp8Epx2OuMTZKQ_FYMwhb77U';
 
 // ─── SDK SUPABASE (chargé depuis CDN dans le HTML) ───
 // <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
