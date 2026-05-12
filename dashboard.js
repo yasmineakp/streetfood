@@ -92,7 +92,24 @@ class StreetFoodDashboard {
       if (document.getElementById('commandesPanel')?.classList.contains('active')) this.renderOrders();
       this.updateKPI();
     });
+// Écouteur pour les changements sur les PLATS
+const ch3 = supabase
+  .channel('realtime-plats')
+  .on('postgres_changes', { 
+    event: '*', 
+    schema: 'public', 
+    table: 'plats',
+    filter: `restaurant_id=eq.${this.restaurantId}` 
+  }, async (payload) => {
+    console.log('Changement détecté sur un plat !', payload);
+    await this.loadAll(); // On recharge les données
+    this.renderPlats();   // On rafraîchit l'affichage
+    this.toast('🥗 La carte a été mise à jour');
+  })
+  .subscribe();
 
+// On met à jour la liste des canaux actifs
+this.realtimeChannels = [ch1, ch2, ch3];
     this.realtimeChannels = [ch1, ch2];
   }
 
